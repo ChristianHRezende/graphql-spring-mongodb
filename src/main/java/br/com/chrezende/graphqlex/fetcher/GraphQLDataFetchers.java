@@ -32,6 +32,7 @@ public class GraphQLDataFetchers {
 	    private void generateData() {
 
 	    	List<Author> authorList = Arrays.asList(new Author("Zé", "Dos Anel"),new Author("Tiririca", "Da Tijuca"),new Author("Maria", "Cornélia"));
+	    	
 	    	authorList.forEach(c -> c = authorRepository.save(c));
 	    			bookRepository.saveAll(Arrays.asList(
 	    					new Book("Lord of rings", 400, authorList.get(0)),
@@ -47,16 +48,23 @@ public class GraphQLDataFetchers {
 	        };
 	    }
 	    
-    public DataFetcher getAllBooks() {
+    public DataFetcher getAllBooksDataFetcher() {
         return dataFetchingEnvironment -> {
         		return bookRepository.findAll();
         };
     }
 
+    public DataFetcher getAllAuthorsDataFetcher() {
+        return dataFetchingEnvironment -> {
+        	List<Author> authorList = authorRepository.findAll();
+        		return authorList;
+        };
+    }
+
     public DataFetcher getAuthorDataFetcher() {
         return dataFetchingEnvironment -> {
-            Map<String,String> book = dataFetchingEnvironment.getSource();
-            String authorId = book.get("authorId");
+            Book book = dataFetchingEnvironment.getSource();
+            String authorId = book.getAuthor().getId();
             return authorRepository.findById(authorId);
         };
     }
