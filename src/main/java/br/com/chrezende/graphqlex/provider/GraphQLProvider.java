@@ -20,46 +20,39 @@ import java.net.URL;
 
 import static graphql.schema.idl.TypeRuntimeWiring.newTypeWiring;
 
-
 @Component
 public class GraphQLProvider {
 
-    private GraphQL graphQL;
+	private GraphQL graphQL;
 
-    @Bean
-    public GraphQL graphQL() { 
-        return graphQL;
-    }
+	@Bean
+	public GraphQL graphQL() {
+		return graphQL;
+	}
 
-    @PostConstruct
-    public void init() throws IOException {
-        URL url = Resources.getResource("schema.graphqls");
-        String sdl = Resources.toString(url, Charsets.UTF_8);
-        GraphQLSchema graphQLSchema = buildSchema(sdl);
-        this.graphQL = GraphQL.newGraphQL(graphQLSchema).build();
-    }
+	@PostConstruct
+	public void init() throws IOException {
+		URL url = Resources.getResource("schema.graphqls");
+		String sdl = Resources.toString(url, Charsets.UTF_8);
+		GraphQLSchema graphQLSchema = buildSchema(sdl);
+		this.graphQL = GraphQL.newGraphQL(graphQLSchema).build();
+	}
 
-    @Autowired
-    GraphQLDataFetchers graphQLDataFetchers;
+	@Autowired
+	GraphQLDataFetchers graphQLDataFetchers;
 
-    private GraphQLSchema buildSchema(String sdl) {
-        TypeDefinitionRegistry typeRegistry = new SchemaParser().parse(sdl);
-        RuntimeWiring runtimeWiring = buildWiring();
-        SchemaGenerator schemaGenerator = new SchemaGenerator();
-        return schemaGenerator.makeExecutableSchema(typeRegistry, runtimeWiring);
-    }
+	private GraphQLSchema buildSchema(String sdl) {
+		TypeDefinitionRegistry typeRegistry = new SchemaParser().parse(sdl);
+		RuntimeWiring runtimeWiring = buildWiring();
+		SchemaGenerator schemaGenerator = new SchemaGenerator();
+		return schemaGenerator.makeExecutableSchema(typeRegistry, runtimeWiring);
+	}
 
-    private RuntimeWiring buildWiring() {
-        return RuntimeWiring.newRuntimeWiring()
-                .type(newTypeWiring("Query")
-                        .dataFetcher("bookById", graphQLDataFetchers.getBookByIdDataFetcher()))
-                .type(newTypeWiring("Query")
-                        .dataFetcher("books", graphQLDataFetchers.getAllBooksDataFetcher()))
-                .type(newTypeWiring("Query")
-                        .dataFetcher("authors",graphQLDataFetchers.getAllAuthorsDataFetcher()))
-                .type(newTypeWiring("Book")
-                        .dataFetcher("author",   graphQLDataFetchers.getAuthorDataFetcher())
-                        .dataFetcher("pageCount", graphQLDataFetchers.getPageCountDataFetcher()))
-                .build();
-    }
+	private RuntimeWiring buildWiring() {
+		return RuntimeWiring.newRuntimeWiring()
+				.type(newTypeWiring("Query").dataFetcher("bookById", graphQLDataFetchers.getBookByIdDataFetcher()))
+				.type(newTypeWiring("Query").dataFetcher("books", graphQLDataFetchers.getAllBooksDataFetcher()))
+				.type(newTypeWiring("Query").dataFetcher("authors", graphQLDataFetchers.getAllAuthorsDataFetcher()))
+				.type(newTypeWiring("Book").dataFetcher("author", graphQLDataFetchers.getAuthorDataFetcher())).build();
+	}
 }

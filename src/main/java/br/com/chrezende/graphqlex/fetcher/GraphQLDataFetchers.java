@@ -69,10 +69,4 @@ public class GraphQLDataFetchers {
         };
     }
     
-    public DataFetcher getPageCountDataFetcher() {
-        return dataFetchingEnvironment -> {
-            Map<String,String> book = dataFetchingEnvironment.getSource();
-            return book.get("totalPages");
-        };
-    }
 }

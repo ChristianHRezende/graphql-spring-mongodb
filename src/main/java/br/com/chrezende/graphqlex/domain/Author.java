@@ -1,7 +1,10 @@
 package br.com.chrezende.graphqlex.domain;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import br.com.chrezende.graphqlex.repository.BookRepository;
 
 @Document
 public class Author {
@@ -36,8 +39,6 @@ public class Author {
 	}
 	public void setLastName(String lastName) {	
 		this.lastName = lastName;
-	}
-	
-	
+	}	
 	
 }
